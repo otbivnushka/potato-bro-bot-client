@@ -1,0 +1,8 @@
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  border-color: var(--color-border);
+  outline-color: color-mix(in srgb, var(--color-ring) 50%, transparent);
+}
