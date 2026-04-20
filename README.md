@@ -1,73 +1,57 @@
-# React + TypeScript + Vite
+# 🧠 Potato Bro Bot — AI Chat Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack desktop + web chat application with AI assistant, streaming responses, and modular architecture.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Tech Stack
 
-## React Compiler
+### Frontend
+- React + TypeScript
+- Tailwind CSS
+- Electron (desktop wrapper)
+- Vite
+- react-router-dom
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend
+- NestJS
+- Prisma ORM
+- PostgreSQL
+- SSE (Server-Sent Events) streaming
 
-## Expanding the ESLint configuration
+### AI Layer
+- Google Gemini API (`generateContentStream`)
+- Custom AI engine (`potato-chat-engine`)
+- Command system (`/commands`)
+- Prompt routing via Character + UserSettings
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Infrastructure
+- Custom logging engine (`potato-log-engine`)
+- Docker support (planned / optional)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
+## ⚙️ Key Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 💬 Chat System
+- Real-time AI chat
+- Streaming responses (SSE / Gemini stream)
+- Message separation: user / bot / system
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🤖 AI Engine
+- Command handling (`/reset`, `/help`, custom commands)
+- Prompt presets (character-based behavior)
+- AI routing layer abstraction over Gemini
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📦 Logging System
+- Server lifecycle logging (start / shutdown)
+- User & bot message tracking
+- Structured log output into `.txt` files per session
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🧩 Backend Features
+- Prisma-based DB models:
+  - User
+  - Character
+  - UserSettings
+  - Messages
+- Auth (cookie-based)
+- Validation via NestJS pipes
