@@ -1,10 +1,10 @@
-# 🧠 Potato Bro Bot — AI Chat Platform
+# Potato Bro Bot — AI Chat Platform
 
 Full-stack desktop + web chat application with AI assistant, streaming responses, and modular architecture.
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
 ### Frontend
 - React + TypeScript
@@ -30,24 +30,24 @@ Full-stack desktop + web chat application with AI assistant, streaming responses
 - Docker support (planned / optional)
 
 ---
-## ⚙️ Key Features
+## Key Features
 
-### 💬 Chat System
+### Chat System
 - Real-time AI chat
 - Streaming responses (SSE / Gemini stream)
 - Message separation: user / bot / system
 
-### 🤖 AI Engine
+### AI Engine
 - Command handling (`/reset`, `/help`, custom commands)
 - Prompt presets (character-based behavior)
 - AI routing layer abstraction over Gemini
 
-### 📦 Logging System
+### Logging System
 - Server lifecycle logging (start / shutdown)
 - User & bot message tracking
 - Structured log output into `.txt` files per session
 
-### 🧩 Backend Features
+### Backend Features
 - Prisma-based DB models:
   - User
   - Character
