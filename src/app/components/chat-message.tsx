@@ -27,11 +27,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div
-      className={`group flex gap-4 px-4 py-6 ${
+      className={`group flex gap-4 px-4 py-6 rounded-2xl ${
         isUser ? 'bg-background' : 'bg-muted/30'
       }`}
     >
-      <div className="flex-shrink-0">
+      <div className={`flex-shrink-0 pt-3`}>
         <div
           className={`w-8 h-8 rounded-lg flex items-center justify-center ${
             isUser
@@ -47,7 +47,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div className="prose prose-slate dark:prose-invert max-w-none">
           <ReactMarkdown
             components={{
-              code({ node, inline, className, children, ...props }: any) {
+              code({ inline, className, children, ...props }: any) {
                 const match = /language-(\w+)/.exec(className || '');
                 return !inline && match ? (
                   <div className="relative group/code">

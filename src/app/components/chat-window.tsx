@@ -3,13 +3,19 @@ import { useEffect, useRef } from 'react';
 import { ChatMessage } from './chat-message';
 import { Sparkles } from 'lucide-react';
 import { Message } from '../types';
+import { Logo } from './logo';
 
 interface ChatWindowProps {
   messages: Message[];
   isLoading?: boolean;
+  activeChat: number | null;
 }
 
-export function ChatWindow({ messages, isLoading }: ChatWindowProps) {
+export function ChatWindow({
+  messages,
+  isLoading,
+  activeChat,
+}: ChatWindowProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
 
   // нормальный автоскролл
@@ -23,25 +29,34 @@ export function ChatWindow({ messages, isLoading }: ChatWindowProps) {
     });
   }, [messages]);
 
+  if (activeChat === null) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+        <Logo />
+
+        <h2 className="mb-2 text-lg font-semibold">
+          Создай новый чат или выбери существующий
+        </h2>
+      </div>
+    );
+  }
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500">
-          <Sparkles className="h-8 w-8 text-white" />
-        </div>
+        <Logo />
 
-        <h2 className="mb-2 text-lg font-semibold">Start a conversation</h2>
+        <h2 className="mb-2 text-lg font-semibold">Спроси что-нибудь</h2>
 
         <p className="max-w-md text-sm text-muted-foreground">
-          Ask me anything or start with a simple question.
+          Спроси меня что-нибудь, и я попробую ответить на твои вопросы
         </p>
 
         <div className="mt-8 grid w-full max-w-2xl gap-3 md:grid-cols-2">
           {[
-            'Explain quantum computing in simple terms',
-            'Write a Python function to sort a list',
-            'Best practices for React?',
-            'Help me debug this code',
+            'Привет, как дела?',
+            'Что произошло на площади Тяньаньмэнь?',
+            'Сравни Си Цзиньпина с Винни-Пухом',
+            'Тайвань независимое государство?',
           ].map((prompt, i) => (
             <button
               key={i}
@@ -73,11 +88,7 @@ export function ChatWindow({ messages, isLoading }: ChatWindowProps) {
           ))}
 
           {isLoading && (
-            <div className="flex gap-3 rounded-xl bg-muted/40 p-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-                <Sparkles className="h-4 w-4" />
-              </div>
-
+            <div className="w-full flex justify-center">
               <div className="flex items-center gap-1">
                 <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.3s]" />
                 <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.15s]" />
@@ -88,7 +99,6 @@ export function ChatWindow({ messages, isLoading }: ChatWindowProps) {
         </div>
       </ScrollArea.Viewport>
 
-      {/* красивый scrollbar */}
       <ScrollArea.Scrollbar
         orientation="vertical"
         className="flex w-2 touch-none select-none p-0.5"

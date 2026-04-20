@@ -1,59 +1,102 @@
 import { useState, useMemo } from 'react';
-import { MessageSquare, Plus, Search, Sun, Moon, Menu, X } from 'lucide-react';
+import {
+  MessageSquare,
+  Plus,
+  Search,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  Laugh,
+  Trash,
+} from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { useTheme } from 'next-themes';
-import { Chat } from '../types';
+import { ChatsResponseDto } from '@/services/dto/chats-response.dto';
+import { Api } from '@/services/api-client';
 
 interface SidebarProps {
-  chats: Chat[];
-  activeChat: string | null;
+  chats: ChatsResponseDto[];
+  activeChat: number | null;
   onNewChat: () => void;
-  onSelectChat: (id: string) => void;
+  onChangeCharacter: () => void;
+  onSelectChat: (id: number) => void;
+  onDeleteChat: (id: number) => void;
 }
 
 export function Sidebar({
   chats,
   activeChat,
   onNewChat,
+  onChangeCharacter,
   onSelectChat,
+  onDeleteChat,
 }: SidebarProps) {
   const [search, setSearch] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const [isThemeUpdating, setIsThemeUpdating] = useState(false);
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
-  // 🔥 оптимизация фильтра
   const filteredChats = useMemo(() => {
     return chats.filter((chat) =>
       chat.title.toLowerCase().includes(search.toLowerCase())
     );
   }, [chats, search]);
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: number) => {
     onSelectChat(id);
     setMobileOpen(false);
   };
 
+  const currentTheme = theme === 'system' ? resolvedTheme : theme;
+
+  const handleToggleTheme = async () => {
+    if (isThemeUpdating) {
+      return;
+    }
+
+    const previousTheme = currentTheme === 'dark' ? 'dark' : 'light';
+    const nextTheme = previousTheme === 'dark' ? 'light' : 'dark';
+
+    setTheme(nextTheme);
+    setIsThemeUpdating(true);
+
+    try {
+      await Api.settings.updateTheme({ theme: nextTheme });
+    } catch {
+      setTheme(previousTheme);
+    } finally {
+      setIsThemeUpdating(false);
+    }
+  };
+
   const SidebarContent = (
     <div className="flex h-full flex-col bg-sidebar border-r border-sidebar-border">
-      {/* Header */}
-      <div className="border-b border-sidebar-border p-4">
+      <div className=" flex flex-col border-b border-sidebar-border p-4 gap-3">
         <button
           onClick={onNewChat}
           className="flex w-full items-center gap-3 rounded-lg bg-sidebar-primary px-4 py-2.5 text-sidebar-primary-foreground transition hover:opacity-90"
         >
           <Plus className="h-5 w-5" />
-          <span>New chat</span>
+          <span>Новый чат</span>
+        </button>
+
+        <button
+          onClick={onChangeCharacter}
+          className="flex w-full items-center gap-3 rounded-lg bg-sidebar-primary px-4 py-2.5 text-sidebar-primary-foreground transition hover:opacity-90"
+        >
+          <Laugh className="h-5 w-5" />
+          <span>Персонаж</span>
         </button>
       </div>
 
-      {/* Search */}
       <div className="p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search chats..."
+            placeholder="Поиск..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg bg-sidebar-accent py-2 pl-10 pr-4 text-sidebar-foreground outline-none transition focus:ring-2 ring-sidebar-ring"
@@ -61,35 +104,41 @@ export function Sidebar({
         </div>
       </div>
 
-      {/* Chat List (Radix ScrollArea) */}
       <div className="flex-1 overflow-hidden px-2">
         <ScrollArea.Root className="h-full">
           <ScrollArea.Viewport className="h-full pr-2">
             {filteredChats.length === 0 ? (
               <div className="p-4 text-center text-muted-foreground">
-                {search ? 'No chats found' : 'No chats yet'}
+                {search ? 'Чаты не найдены' : 'Пока нет чатов'}
               </div>
             ) : (
               <div className="space-y-1">
                 {filteredChats.map((chat) => (
                   <button
-                    key={chat.id}
-                    onClick={() => handleSelect(chat.id)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition ${
-                      activeChat === chat.id
+                    key={chat.chat_id}
+                    onClick={() => handleSelect(chat.chat_id)}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition ${
+                      activeChat === chat.chat_id
                         ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                         : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
                     }`}
                   >
-                    <MessageSquare className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">{chat.title}</span>
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">{chat.title}</span>
+                    </div>
+                    {activeChat === chat.chat_id && (
+                      <Trash
+                        className="text-red-500 h-4"
+                        onClick={() => onDeleteChat(chat.chat_id)}
+                      />
+                    )}
                   </button>
                 ))}
               </div>
             )}
           </ScrollArea.Viewport>
 
-          {/* scrollbar */}
           <ScrollArea.Scrollbar
             orientation="vertical"
             className="flex w-2 p-0.5"
@@ -99,21 +148,21 @@ export function Sidebar({
         </ScrollArea.Root>
       </div>
 
-      {/* Theme Toggle */}
       <div className="border-t border-sidebar-border p-4">
         <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition hover:bg-sidebar-accent"
+          onClick={handleToggleTheme}
+          disabled={isThemeUpdating}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition hover:bg-sidebar-accent disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {theme === 'dark' ? (
+          {currentTheme === 'dark' ? (
             <>
               <Sun className="h-5 w-5" />
-              <span>Light mode</span>
+              <span>Темная</span>
             </>
           ) : (
             <>
               <Moon className="h-5 w-5" />
-              <span>Dark mode</span>
+              <span>Светлая</span>
             </>
           )}
         </button>
@@ -123,7 +172,6 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile Toggle */}
       <button
         onClick={() => setMobileOpen(true)}
         className="fixed left-4 top-4 z-50 rounded-lg border border-border bg-card p-2 transition hover:bg-accent md:hidden"
@@ -131,16 +179,13 @@ export function Sidebar({
         <Menu className="h-5 w-5" />
       </button>
 
-      {/* Desktop */}
       <aside className="hidden h-full w-64 md:block">{SidebarContent}</aside>
 
-      {/* Mobile Drawer */}
       <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 md:hidden" />
 
           <Dialog.Content className="fixed inset-y-0 left-0 z-50 w-64 md:hidden">
-            {/* 🔥 обязательно для accessibility */}
             <Dialog.Title className="sr-only">Sidebar</Dialog.Title>
 
             <button

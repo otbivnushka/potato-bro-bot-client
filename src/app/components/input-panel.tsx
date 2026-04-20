@@ -16,9 +16,11 @@ export function InputPanel({ onSend, disabled }: InputPanelProps) {
     const el = textareaRef.current;
     if (!el) return;
 
-    el.style.height = '0px';
-    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
-  }, [input]);
+    requestAnimationFrame(() => {
+      el.style.height = '0px';
+      el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    });
+  }, [input, disabled]);
 
   const sendMessage = () => {
     const trimmed = input.trim();
@@ -58,7 +60,7 @@ export function InputPanel({ onSend, disabled }: InputPanelProps) {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Message..."
+                  placeholder="Сообщение..."
                   disabled={disabled}
                   rows={1}
                   className="
@@ -84,12 +86,11 @@ export function InputPanel({ onSend, disabled }: InputPanelProps) {
               <button
                 disabled={!input.trim() || disabled}
                 className="
-                  absolute right-2 bottom-2
+                  absolute right-2 bottom-1/4 h-max
                   flex items-center justify-center
                   rounded-xl
-                  bg-primary
                   p-2
-                  text-primary-foreground
+                  text-primary
                   shadow-sm
                   transition
                   hover:opacity-90 hover:scale-[1.02]
@@ -104,7 +105,7 @@ export function InputPanel({ onSend, disabled }: InputPanelProps) {
         </Form.Root>
 
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          Enter — send · Shift + Enter — new line
+          Enter — отправить, Shift + Enter — перевод строки
         </p>
       </div>
     </div>
