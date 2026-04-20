@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/use-auth';
-import { Lock, AlertCircle, Sparkles, Smile } from 'lucide-react';
+import { Lock, AlertCircle, Smile } from 'lucide-react';
 import { Logo } from '../components/logo';
 
 export function Login() {

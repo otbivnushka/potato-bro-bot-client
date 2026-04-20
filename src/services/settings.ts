@@ -1,6 +1,5 @@
 import { ApiRoutes } from './constants';
 import {
-  UpdateCharacterDto,
   UpdateThemeDto,
   UserSettingsResponseDto,
 } from './dto/user-settings.dto';

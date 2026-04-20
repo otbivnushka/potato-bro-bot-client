@@ -1,7 +1,6 @@
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { useEffect, useRef } from 'react';
 import { ChatMessage } from './chat-message';
-import { Sparkles } from 'lucide-react';
 import { Message } from '../types';
 import { Logo } from './logo';
 
