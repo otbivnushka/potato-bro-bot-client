@@ -31,12 +31,15 @@ export function useStreamMessage() {
     });
 
     try {
-      const res = await fetch('http://localhost:3000/messages/stream', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatId, content }),
-        signal: controller.signal,
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/messages/stream`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatId, content }),
+          signal: controller.signal,
+        }
+      );
 
       if (!res.body) throw new Error('No stream');
 
